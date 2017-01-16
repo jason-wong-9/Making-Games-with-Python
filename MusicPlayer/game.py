@@ -1,6 +1,7 @@
 import pygame
 
 pygame.init()
+pygame.mixer.init()
 
 size = [640, 480]
 screen = pygame.display.set_mode(size)
@@ -9,6 +10,11 @@ clock = pygame.time.Clock()
 
 cupcakeImg = pygame.image.load('cupcake.png')
 cupcakeImg = pygame.transform.scale(cupcakeImg, (200, 200))
+
+pygame.mixer.music.load('nevereverland.mp3')
+
+isMusicPlaying = False
+isPressing = False
 
 def drawImage(image, x, y):
 	cupcakeDraw = screen.blit(image, (x,y))
@@ -29,8 +35,19 @@ while done == False:
 	pos = pygame.mouse.get_pos()
 	(pressed1,pressed2,pressed3) = pygame.mouse.get_pressed()
 
-	if cupcakeDraw.collidepoint(pos)& pressed1==1:
+	if pressed1 == 0:
+		isPressing = False
+
+	if cupcakeDraw.collidepoint(pos) and pressed1==1 and isPressing == False:
 		print("You have opened a chest!")
+		isPressing = True
+		if isMusicPlaying:
+			pygame.mixer.music.stop()
+			isMusicPlaying = False
+		else:
+			pygame.mixer.music.play(-1)
+			isMusicPlaying = True
+
 	pygame.display.update()
 	clock.tick(60)
 
