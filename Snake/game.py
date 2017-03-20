@@ -34,6 +34,8 @@ SNAKE_SPEED = 30
 SNAKE_X = 0
 SNAKE_Y = 0
 SNAKE_DIRECTION = Direction.DOWN
+food = None
+
 
 def drawSnakePart(x, y, isHead):
 	if isHead :
@@ -42,13 +44,16 @@ def drawSnakePart(x, y, isHead):
 		pygame.draw.rect(screen, SNAKE_BODY_COLOR, (x, y, SNAKE_BODY_WIDTH, SNAKE_BODY_HEIGHT))
 
 def generateFoodLocation():
-	x = randint(0, size[0]/30 - 1) * 30
-	y = randint(0, size[1]/30 - 1) * 30
+	x = randint(0, size[0]/30 - 1) * 30 + 15
+	y = randint(0, size[1]/30 - 1) * 30 + 15
 	return (x, y)
 
 def drawFood(x, y):
-	food = Food(x, y)
-	pygame.draw.rect(screen, Food.COLOR, (food.x, food.y, Food.WIDTH, Food.HEIGHT))
+	pygame.draw.circle(screen, Food.COLOR, (food.x, food.y), Food.RADIUS, 2)
+
+def collide():
+	return food is not None and SNAKE_X == food.x - 15 and SNAKE_Y == food.y - 15
+
 
 #all the fps and quit info is here.
 done = False
@@ -68,8 +73,13 @@ while done == False:
 	
 	screen.fill((255, 255, 255))
 	drawSnakePart(SNAKE_X, SNAKE_Y, True)
-	(foodX,foodY) = generateFoodLocation()
+
+	if food is None or collide():
+		(foodX,foodY) = generateFoodLocation()
+		food = Food(foodX, foodY)
+
 	drawFood(foodX, foodY)
+	
 	if SNAKE_DIRECTION == Direction.UP:
 		SNAKE_Y = SNAKE_Y - SNAKE_SPEED
 	elif SNAKE_DIRECTION == Direction.LEFT:
